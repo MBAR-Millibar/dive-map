@@ -22,19 +22,35 @@ import { createDiveMap, defaultCommunityLabel, normalizeCodes, normalizeCommunit
  * @property {boolean} [autoFocus] Zoom in on the countries when the map is first drawn with some (default true).
  * @property {Record<string, number>} [community] Divers per country, drawn in the soft community colour under the selected countries.
  * @property {(count: number) => string} [communityLabel] The tooltip text for a community country's count (default `${n} divers`).
+ * @property {import('./core.js').CountrySelection} [wishlist] Countries the diver wants to dive, drawn in the wish colour.
+ * @property {'visited' | 'wishlist'} [editing] Which list a click toggles (default 'visited').
+ * @property {(codes: string[]) => void} [onWishlistChange] Called with the new wishlist after a click changes it.
  * @property {string} [className] Classes for the wrapper, which needs a height.
  */
 
 /**
  * @param {DiveMapProps} props
  */
-export function DiveMap({ selected = [], names = {}, interactive = false, onChange, className, autoFocus = true, community, communityLabel }) {
+export function DiveMap({
+    selected = [],
+    names = {},
+    interactive = false,
+    onChange,
+    className,
+    autoFocus = true,
+    community,
+    communityLabel,
+    wishlist = [],
+    editing = 'visited',
+    onWishlistChange,
+}) {
     const canvasRef = useRef(null);
     const mapRef = useRef(null);
-    const latest = useRef({ selected, names, onChange, community, communityLabel });
-    latest.current = { selected, names, onChange, community, communityLabel };
+    const latest = useRef({ selected, names, onChange, community, communityLabel, wishlist, editing, onWishlistChange });
+    latest.current = { selected, names, onChange, community, communityLabel, wishlist, editing, onWishlistChange };
 
     const selectedKey = normalizeCodes(selected).join(',');
+    const wishlistKey = normalizeCodes(wishlist).join(',');
     const communityKey = Object.entries(normalizeCommunity(community))
         .sort(([a], [b]) => (a < b ? -1 : 1))
         .map(([code, count]) => `${code}:${count}`)
@@ -49,6 +65,9 @@ export function DiveMap({ selected = [], names = {}, interactive = false, onChan
             community: latest.current.community,
             communityLabel: (count) => (latest.current.communityLabel ?? defaultCommunityLabel)(count),
             onChange: (codes) => latest.current.onChange?.(codes),
+            wishlist: latest.current.wishlist,
+            editing: latest.current.editing,
+            onWishlistChange: (codes) => latest.current.onWishlistChange?.(codes),
         });
         mapRef.current = map;
 
@@ -65,6 +84,14 @@ export function DiveMap({ selected = [], names = {}, interactive = false, onChan
     useEffect(() => {
         mapRef.current?.setCommunity(latest.current.community);
     }, [communityKey]);
+
+    useEffect(() => {
+        mapRef.current?.setWishlist(latest.current.wishlist);
+    }, [wishlistKey]);
+
+    useEffect(() => {
+        mapRef.current?.setEditing(editing);
+    }, [editing]);
 
     useEffect(() => {
         mapRef.current?.setNames(names);

@@ -10,6 +10,7 @@ It wraps [jsVectorMap](https://github.com/themustafaomar/jsvectormap) `^1.7.0` a
 - Zoom uses the + / − buttons only. Scroll-zoom is off, so scrolling over the map still scrolls the page; once zoomed, drag to pan.
 - When a map is first drawn with countries, it zooms in on them (shapes and dots), with some room around them and at most 4× the world view. It happens once, so picking countries afterwards doesn't move the map. Pass `autoFocus: false` to keep the world view, or call `focus()` to zoom in again.
 - An optional community layer (`community`, divers per country) tints the community's countries softly under the diver's own, which stay strong on top. See [Community layer](#community-layer).
+- An optional wishlist (`wishlist`, the countries a diver wants to dive) is drawn in a warm second colour. With `editing: 'wishlist'`, clicks edit it instead of the visited countries. See [Wishlist](#wishlist).
 - jsVectorMap and its world map (about 100 KB) are imported on first use, so pages without a map don't download them.
 
 Plain ESM JavaScript with JSDoc types. There is no build step.
@@ -42,6 +43,7 @@ The map reads three CSS variables from its element (inherited from the `.mbar-di
 | --- | --- | --- |
 | `--mbar-dive-map-land` | `rgb(255 255 255 / 0.14)` | Every country |
 | `--mbar-dive-map-visited` | `var(--mbar-ocean-400, #4daedb)` | Visited countries and dots |
+| `--mbar-dive-map-wish` | `#f6ad55`; `#e8913a` under `html:not(.dark)` | Wished countries and their dots |
 | `--mbar-dive-map-community` | `rgb(77 174 219 / 0.35)`; `rgb(13 138 197 / 0.25)` under `html:not(.dark)` | Community countries and their (smaller) dots |
 
 `dive-map.css` sets the light community value with `html:not(.dark) .mbar-dive-map`, so to override `--mbar-dive-map-community` in a light theme use a selector at least as specific (for example `html:not(.dark) .my-map`).
@@ -104,6 +106,9 @@ import { DiveMap } from '@millibar/dive-map/react';
 | `autoFocus` | `boolean` | Zoom in on the countries when the map is first drawn with some (default `true`) |
 | `community` | `Record<string, number>` | Divers per country, drawn under the selected ones (see [Community layer](#community-layer)) |
 | `communityLabel` | `(count: number) => string` | Tooltip text for a community count (default `` (n) => `${n} divers` ``) |
+| `wishlist` | `string[]` | Countries the diver wants to dive (see [Wishlist](#wishlist)) |
+| `editing` | `'visited' \| 'wishlist'` | Which list a click toggles (default `'visited'`) |
+| `onWishlistChange` | `(codes: string[]) => void` | The new wishlist after a click changes it |
 | `className` | `string` | Added to the `.mbar-dive-map` wrapper |
 
 The file starts with `'use client'` and draws the map in an effect, so it renders an empty box on the server and is safe in the App Router. To keep jsVectorMap out of the server bundle entirely, load it with `next/dynamic`:
@@ -130,11 +135,13 @@ const map = createDiveMap(document.querySelector('#map'), {
 map.setSelected(['MT', 'GF']); // repaint
 map.setNames({ MT: 'Malte' });
 map.setCommunity({ EG: 12 });  // replace the community layer
+map.setWishlist(['PH']);       // replace the wishlist
+map.setEditing('wishlist');    // clicks now toggle the wishlist
 await map.ready;               // drawn
 map.destroy();                 // removes the SVG, zoom buttons and tooltip
 ```
 
-The element must sit inside `.mbar-dive-map` (or set the two variables on it) and have a size. `setSelected()`, `setNames()` and `setCommunity()` can be called before the map has loaded.
+The element must sit inside `.mbar-dive-map` (or set the two variables on it) and have a size. `setSelected()`, `setNames()`, `setCommunity()`, `setWishlist()` and `setEditing()` can be called before the map has loaded.
 
 ## Community layer
 
@@ -157,6 +164,28 @@ map.setCommunity({ EG: 130, PH: 3 }); // at runtime
 - Alpine: `mbarDiveMap({ community: {...}, communityLabel })`. `community` is a property of the component, so the map repaints when it changes (`this.community = {...}`, or an entangled Livewire property). React: the `community` and `communityLabel` props; the map repaints when the codes or counts change, not on every new object.
 
 Without `community`, the map is drawn exactly as in v1.1.0.
+
+## Wishlist
+
+Pass `wishlist`, the countries a diver wants to dive, to draw them in `--mbar-dive-map-wish`:
+
+```js
+createDiveMap(element, {
+    selected: ['EG'],
+    wishlist: ['PH', 'MV'],
+    interactive: true,
+    editing: 'wishlist',                     // default: 'visited'
+    onChange: (codes) => saveVisited(codes),
+    onWishlistChange: (codes) => saveWishlist(codes),
+});
+```
+
+- A country is visited or wished, never both. A click toggles the country in the list being `editing`, and adding it there takes it out of the other list. Each callback fires only when its own list changed. Marking a wished country as visited, for example, fires both.
+- Wished countries are drawn over the community tint and under the visited countries. Wished dots are drawn in the wish colour, between the community dots and the visited dots.
+- `autoFocus` and `focus()` take in both visited and wished countries.
+- Alpine: `mbarDiveMap({ wishlist: [...], editing: 'visited' })`. `wishlist` and `editing` are component properties, and a click writes the new list back to `wishlist`. React: the `wishlist`, `editing` and `onWishlistChange` props.
+
+Without `wishlist`, the map is drawn exactly as in v1.2.0.
 
 ## Countries
 

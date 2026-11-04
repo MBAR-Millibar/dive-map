@@ -5,8 +5,8 @@
  * jsVectorMap and its world map (~100 KB) are imported on first use, so
  * pages without a map never download them, and importing this module on a
  * server is safe. Colours come from the CSS custom properties
- * --mbar-dive-map-land / --mbar-dive-map-visited / --mbar-dive-map-community
- * (see dive-map.css).
+ * --mbar-dive-map-land / --mbar-dive-map-visited / --mbar-dive-map-wish /
+ * --mbar-dive-map-community (see dive-map.css).
  */
 import { OFF_MAP_COORDS } from './countries.js';
 
@@ -25,6 +25,9 @@ import { OFF_MAP_COORDS } from './countries.js';
  * @property {boolean} [autoFocus] Zoom in on the countries when the map is first drawn with some (default true).
  * @property {Record<string, number>} [community] Divers per country, drawn in the soft community colour under the selected countries.
  * @property {(count: number) => string} [communityLabel] The tooltip text for a community country's count (default `${n} divers`).
+ * @property {CountrySelection} [wishlist] Countries the diver wants to dive, drawn in the wish colour. A country is in `selected` or here, never both.
+ * @property {'visited' | 'wishlist'} [editing] Which list a click toggles (default 'visited').
+ * @property {(codes: string[]) => void} [onWishlistChange] Called with the new wishlist after a click changes it.
  */
 
 /**
@@ -32,6 +35,8 @@ import { OFF_MAP_COORDS } from './countries.js';
  * @property {(selected: CountrySelection) => void} setSelected Highlight these countries instead.
  * @property {(names: Record<string, string>) => void} setNames Replace the country names.
  * @property {(community: Record<string, number>) => void} setCommunity Replace the community layer.
+ * @property {(wishlist: CountrySelection) => void} setWishlist Draw these countries in the wish colour instead.
+ * @property {(editing: 'visited' | 'wishlist') => void} setEditing Choose which list a click toggles.
  * @property {() => void} focus Zoom in on the highlighted countries (the whole world when there are none).
  * @property {() => void} destroy Remove the map and its tooltip.
  * @property {Promise<void>} ready Settles once the map is drawn (or right away after destroy()).
@@ -203,11 +208,17 @@ export function createDiveMap(element, {
     autoFocus = true,
     community = {},
     communityLabel = defaultCommunityLabel,
+    wishlist = [],
+    editing = 'visited',
+    onWishlistChange,
 } = {}) {
     let codes = normalizeCodes(selected);
+    let wishCodes = normalizeCodes(wishlist);
+    let editingList = editing;
     let countryNames = names ?? {};
     let communityCounts = normalizeCommunity(community);
     let communityColour = null;
+    let wishColour = null;
     let map = null;
     let destroyed = false;
 
@@ -221,13 +232,15 @@ export function createDiveMap(element, {
             return;
         }
 
-        // The community tint goes in each region's `current` style, which
-        // jsVectorMap draws under `selected`: a picked country stays strong,
-        // and deselecting it brings the tint back.
+        // The wish and community colours go in each region's `current`
+        // style, which jsVectorMap draws under `selected`: a dived country
+        // stays strong, and deselecting it brings the colour underneath back.
         for (const [code, region] of Object.entries(map.regions)) {
             const current = region.element.shape.style.current;
 
-            if (communityCounts[code]) {
+            if (wishCodes.includes(code)) {
+                current.fill = wishColour;
+            } else if (communityCounts[code]) {
                 current.fill = communityColour;
             } else if ('fill' in current) {
                 delete current.fill;
@@ -243,23 +256,48 @@ export function createDiveMap(element, {
 
         const dot = (code) => ({ name: label(code, countryNames[code] ?? code), coords: OFF_MAP_COORDS[code] });
 
+        const isDot = (code) => ! map.regions[code] && OFF_MAP_COORDS[code];
+
         map.removeMarkers();
-        // Community dots first, so the diver's own are drawn over them.
+        // Community dots first, then wished ones, so the diver's own are drawn over them.
         map.addMarkers(Object.keys(communityCounts)
-            .filter((code) => ! map.regions[code] && OFF_MAP_COORDS[code] && ! codes.includes(code))
+            .filter((code) => isDot(code) && ! codes.includes(code) && ! wishCodes.includes(code))
             .map((code) => ({ ...dot(code), style: { initial: { fill: communityColour, r: 3 } } })));
+        map.addMarkers(wishCodes
+            .filter((code) => isDot(code) && ! codes.includes(code))
+            .map((code) => ({ ...dot(code), style: { initial: { fill: wishColour } } })));
         map.addMarkers(codes
             .filter((code) => ! map.regions[code] && OFF_MAP_COORDS[code])
             .map(dot));
     };
 
+    /** Toggle `code` in the list being edited; adding it there takes it out of the other list. */
     const toggle = (code) => {
-        codes = codes.includes(code)
-            ? codes.filter((selectedCode) => selectedCode !== code)
-            : [...codes, code];
+        const editingWishlist = editingList === 'wishlist';
+        const list = editingWishlist ? wishCodes : codes;
+        const adding = ! list.includes(code);
+        const next = adding ? [...list, code] : list.filter((listed) => listed !== code);
+        const other = editingWishlist ? codes : wishCodes;
+        const otherChanged = adding && other.includes(code);
+        const nextOther = otherChanged ? other.filter((listed) => listed !== code) : other;
+
+        if (editingWishlist) {
+            wishCodes = next;
+            codes = nextOther;
+        } else {
+            codes = next;
+            wishCodes = nextOther;
+        }
 
         paint();
-        onChange?.([...codes]);
+
+        if (! editingWishlist || otherChanged) {
+            onChange?.([...codes]);
+        }
+
+        if (editingWishlist || otherChanged) {
+            onWishlistChange?.([...wishCodes]);
+        }
     };
 
     const ready = loadLibrary().then((jsVectorMap) => {
@@ -271,6 +309,7 @@ export function createDiveMap(element, {
         const land = style.getPropertyValue('--mbar-dive-map-land').trim() || '#cbd5e1';
         const visited = style.getPropertyValue('--mbar-dive-map-visited').trim() || '#0d8ac5';
         communityColour = style.getPropertyValue('--mbar-dive-map-community').trim() || 'rgb(13 138 197 / 0.25)';
+        wishColour = style.getPropertyValue('--mbar-dive-map-wish').trim() || '#f6ad55';
 
         map = new jsVectorMap({
             selector: element,
@@ -309,8 +348,8 @@ export function createDiveMap(element, {
 
         // Only on the first draw: zooming again on every click would move the
         // map under the diver's cursor while they pick countries.
-        if (autoFocus && codes.length > 0) {
-            focusOnCountries(map, codes);
+        if (autoFocus && codes.length + wishCodes.length > 0) {
+            focusOnCountries(map, [...codes, ...wishCodes]);
         }
     });
 
@@ -332,9 +371,18 @@ export function createDiveMap(element, {
             paint();
         },
 
+        setWishlist(wishlist) {
+            wishCodes = normalizeCodes(wishlist);
+            paint();
+        },
+
+        setEditing(editing) {
+            editingList = editing;
+        },
+
         focus() {
             if (map) {
-                focusOnCountries(map, codes);
+                focusOnCountries(map, [...codes, ...wishCodes]);
             }
         },
 
