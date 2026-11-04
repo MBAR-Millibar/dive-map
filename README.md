@@ -43,6 +43,8 @@ The map reads three CSS variables from its element (inherited from the `.mbar-di
 | --- | --- | --- |
 | `--mbar-dive-map-land` | `rgb(255 255 255 / 0.14)` | Every country |
 | `--mbar-dive-map-visited` | `var(--mbar-ocean-400, #4daedb)` | Visited countries and dots |
+| `--mbar-dive-map-land-hover` | `rgb(255 255 255 / 0.3)` | A country under the pointer (lighter than land) |
+| `--mbar-dive-map-visited-hover` | `var(--mbar-ocean-300, #8eceeb)` | A selected country or dot under the pointer (lighter than visited) |
 | `--mbar-dive-map-wish` | `#f6ad55`; `#e8913a` under `html:not(.dark)` | Wished countries and their dots |
 | `--mbar-dive-map-community` | `rgb(77 174 219 / 0.35)`; `rgb(13 138 197 / 0.25)` under `html:not(.dark)` | Community countries and their (smaller) dots |
 

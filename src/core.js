@@ -6,7 +6,8 @@
  * pages without a map never download them, and importing this module on a
  * server is safe. Colours come from the CSS custom properties
  * --mbar-dive-map-land / --mbar-dive-map-visited / --mbar-dive-map-wish /
- * --mbar-dive-map-community (see dive-map.css).
+ * --mbar-dive-map-community and the hover colours --mbar-dive-map-land-hover /
+ * --mbar-dive-map-visited-hover (see dive-map.css).
  */
 import { OFF_MAP_COORDS } from './countries.js';
 
@@ -310,6 +311,10 @@ export function createDiveMap(element, {
         const visited = style.getPropertyValue('--mbar-dive-map-visited').trim() || '#0d8ac5';
         communityColour = style.getPropertyValue('--mbar-dive-map-community').trim() || 'rgb(13 138 197 / 0.25)';
         wishColour = style.getPropertyValue('--mbar-dive-map-wish').trim() || '#f6ad55';
+        // Hovering lights a country up rather than fading it, which on a navy
+        // ground read as darker.
+        const landHover = style.getPropertyValue('--mbar-dive-map-land-hover').trim() || 'rgb(255 255 255 / 0.3)';
+        const visitedHover = style.getPropertyValue('--mbar-dive-map-visited-hover').trim() || '#8eceeb';
 
         map = new jsVectorMap({
             selector: element,
@@ -326,13 +331,13 @@ export function createDiveMap(element, {
             markers: [],
             regionStyle: {
                 initial: { fill: land, fillOpacity: 1, stroke: 'none' },
-                hover: { fillOpacity: 0.8, cursor: interactive ? 'pointer' : 'default' },
+                hover: { fill: landHover, fillOpacity: 1, cursor: interactive ? 'pointer' : 'default' },
                 selected: { fill: visited },
-                selectedHover: { fillOpacity: 0.85 },
+                selectedHover: { fill: visitedHover, fillOpacity: 1 },
             },
             markerStyle: {
                 initial: { fill: visited, stroke: '#ffffff', strokeWidth: 1, strokeOpacity: 0.9, r: 4 },
-                hover: { cursor: 'default', fillOpacity: 0.85 },
+                hover: { cursor: 'default', fill: visitedHover },
             },
             onRegionTooltipShow: (event, tooltip, code) => {
                 tooltip.text(label(code, countryNames[code] ?? tooltip.text()));
