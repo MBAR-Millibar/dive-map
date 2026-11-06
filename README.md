@@ -1,5 +1,13 @@
 # @millibar/dive-map
 
+[![Release](https://img.shields.io/github/v/release/MBAR-Millibar/dive-map?color=0d8ac5)](https://github.com/MBAR-Millibar/dive-map/releases/latest)
+[![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)](#license)
+[![ESM, no build step](https://img.shields.io/badge/ESM-no%20build%20step-4daedb)](#install)
+[![jsVectorMap ^1.7.0](https://img.shields.io/badge/jsVectorMap-%5E1.7.0-1a2b4c)](https://github.com/themustafaomar/jsvectormap)
+[![Alpine.js](https://img.shields.io/badge/Alpine.js-adapter-77c1d2?logo=alpinedotjs&logoColor=white)](#alpine-appmillibario)
+[![React 18+](https://img.shields.io/badge/React-18%2B-61dafb?logo=react&logoColor=white)](#react-nextjs)
+[![Live: map.millibar.io](https://img.shields.io/badge/live-map.millibar.io-0d8ac5)](https://map.millibar.io)
+
 The Millibar Dive Map: a world map highlighting the countries a diver has dived in. Shared by app.millibar.io (Experience page, Dashboard widget, public profile) and the Dive Map landing app (map.millibar.io), so both draw exactly the same map.
 
 It wraps [jsVectorMap](https://github.com/themustafaomar/jsvectormap) `^1.7.0` and keeps Millibar's fixes:
@@ -18,13 +26,13 @@ Plain ESM JavaScript with JSDoc types. There is no build step.
 ## Install
 
 ```bash
-npm install https://github.com/MBAR-Millibar/millibar-dive-map/archive/refs/tags/v1.2.0.tar.gz
-# or: pnpm add https://github.com/MBAR-Millibar/millibar-dive-map/archive/refs/tags/v1.2.0.tar.gz
+npm install https://github.com/MBAR-Millibar/dive-map/archive/refs/tags/v1.4.0.tar.gz
+# or: pnpm add https://github.com/MBAR-Millibar/dive-map/archive/refs/tags/v1.4.0.tar.gz
 ```
 
-Pin a tag so a project only changes when you bump it.
+Pin a tag so a project only changes when you bump it. Each tag has a [release](https://github.com/MBAR-Millibar/dive-map/releases) listing its changes.
 
-**Don't install with `github:MBAR-Millibar/millibar-dive-map#…`.** npm writes that into the lockfile as a `git+ssh://` URL, and deploy servers (Forge) only have a deploy key for their own repo, so `npm ci` fails and no assets get built. The release tarball above is plain HTTPS and needs no key. After installing, check that `package-lock.json` has no `git+ssh`.
+**Don't install with `github:MBAR-Millibar/dive-map#…`.** npm writes that into the lockfile as a `git+ssh://` URL, and deploy servers (Forge) only have a deploy key for their own repo, so `npm ci` fails and no assets get built. The release tarball above is plain HTTPS and needs no key. After installing, check that `package-lock.json` has no `git+ssh`.
 
 `jsvectormap` comes with the package. `react` is an optional peer dependency, needed only for the React component.
 
@@ -209,3 +217,7 @@ isDiveMapCountry('mt'); // true
 ## Known limits
 
 - jsVectorMap keeps one global event registry. Destroying a map flushes it, which also detaches the events of any other map on the page. One map per page is safe.
+
+## License
+
+Proprietary (`UNLICENSED`). The source is public so Millibar's apps can install it, but it is not licensed for reuse. © Millibar, all rights reserved.
