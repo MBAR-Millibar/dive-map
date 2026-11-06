@@ -26,8 +26,8 @@ Plain ESM JavaScript with JSDoc types. There is no build step.
 ## Install
 
 ```bash
-npm install https://github.com/MBAR-Millibar/dive-map/archive/refs/tags/v1.4.0.tar.gz
-# or: pnpm add https://github.com/MBAR-Millibar/dive-map/archive/refs/tags/v1.4.0.tar.gz
+npm install https://github.com/MBAR-Millibar/dive-map/archive/refs/tags/v1.4.1.tar.gz
+# or: pnpm add https://github.com/MBAR-Millibar/dive-map/archive/refs/tags/v1.4.1.tar.gz
 ```
 
 Pin a tag so a project only changes when you bump it. Each tag has a [release](https://github.com/MBAR-Millibar/dive-map/releases) listing its changes.
