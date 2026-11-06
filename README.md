@@ -9,6 +9,8 @@
 [![React 18+](https://img.shields.io/badge/React-18%2B-61dafb?logo=react&logoColor=white)](#react-nextjs)
 [![Live: map.millibar.io](https://img.shields.io/badge/live-map.millibar.io-0d8ac5)](https://map.millibar.io)
 
+![The Millibar Dive Map: countries dived in blue, countries to dive in sand, the community's countries in a soft blue tint, and small islands such as Malta and the Maldives as dots](docs/screenshot.png)
+
 The Millibar Dive Map: a world map highlighting the countries a diver has dived in. Shared by app.millibar.io (Experience page, Dashboard widget, public profile) and the Dive Map landing app (map.millibar.io), so both draw exactly the same map.
 
 It wraps [jsVectorMap](https://github.com/themustafaomar/jsvectormap) `^1.7.0` and keeps Millibar's fixes:

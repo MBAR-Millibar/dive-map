@@ -1,0 +1,3 @@
+# Keep the README image and repo tooling out of the tag tarballs projects install.
+/docs export-ignore
+/.github export-ignore

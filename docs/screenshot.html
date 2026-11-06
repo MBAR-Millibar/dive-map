@@ -1,0 +1,49 @@
+<!--
+  Source of docs/screenshot.png (the README image). From the repo root:
+    npm ci && python3 -m http.server 8765
+  then open http://127.0.0.1:8765/docs/screenshot.html and capture the card at 1200x640, 2x
+  (for example headless Chrome: --window-size=1200,640 --force-device-scale-factor=2 --screenshot).
+-->
+<!doctype html>
+<html class="dark">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/jsvectormap/dist/jsvectormap.css">
+<link rel="stylesheet" href="/dive-map.css">
+<script type="importmap">
+{ "imports": {
+  "jsvectormap": "/node_modules/jsvectormap/dist/jsvectormap.esm.js",
+  "jsvectormap/dist/maps/world.js": "/node_modules/jsvectormap/dist/maps/world.js"
+} }
+</script>
+<style>
+  html, body { margin: 0; background: #071629; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  .card { width: 1200px; padding: 28px 32px 22px; box-sizing: border-box; background: #0b1f3a; }
+  .mbar-dive-map { height: 560px; width: 100%; }
+  .legend { display: flex; gap: 28px; margin-top: 14px; color: rgb(255 255 255 / 0.75); font-size: 15px; }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="mbar-dive-map"><div id="map" style="height:100%;width:100%"></div></div>
+  <div class="legend">
+    <span><i style="background:#4daedb"></i>Dived</span>
+    <span><i style="background:#f6ad55"></i>Want to dive</span>
+    <span><i style="background:rgb(77 174 219 / 0.35)"></i>Community</span>
+  </div>
+</div>
+<script type="module">
+  import { createDiveMap } from '/src/index.js';
+  const map = createDiveMap(document.getElementById('map'), {
+    selected: ['EG', 'MT', 'MV', 'ID', 'TH', 'MX', 'AU', 'ES', 'HR', 'PT', 'BZ', 'ZA'],
+    wishlist: ['PH', 'PW', 'GA', 'FJ', 'EC', 'NO'],
+    community: { US: 40, GB: 30, DE: 50, FR: 30, IT: 35, GR: 20, TR: 15, CU: 8, BR: 12, JP: 10, NZ: 9, MY: 14, OM: 6, KE: 5, MZ: 7, CA: 10, CL: 4, SC: 3, BS: 6, HN: 5 },
+    autoFocus: false,
+  });
+  await map.ready;
+  document.body.dataset.ready = '1';
+</script>
+</body>
+</html>
