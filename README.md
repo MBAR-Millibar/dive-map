@@ -1,7 +1,7 @@
 # @millibar/dive-map
 
 [![Release](https://img.shields.io/github/v/release/MBAR-Millibar/dive-map?color=0d8ac5)](https://github.com/MBAR-Millibar/dive-map/releases/latest)
-[![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)](#license)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![ESM, no build step](https://img.shields.io/badge/ESM-no%20build%20step-4daedb)](#install)
 [![jsVectorMap ^1.7.0](https://img.shields.io/badge/jsVectorMap-%5E1.7.0-1a2b4c)](https://github.com/themustafaomar/jsvectormap)
 [![Alpine.js](https://img.shields.io/badge/Alpine.js-adapter-77c1d2?logo=alpinedotjs&logoColor=white)](#alpine-appmillibario)
@@ -220,4 +220,4 @@ isDiveMapCountry('mt'); // true
 
 ## License
 
-Proprietary (`UNLICENSED`). The source is public so Millibar's apps can install it, but it is not licensed for reuse. © Millibar, all rights reserved.
+[Apache-2.0](LICENSE) © 2026 Millibar. You may use, change and redistribute this package, including commercially. Any copy or product you distribute must include the licence and the [NOTICE](NOTICE) file, which credits Millibar, and mark files you changed. jsVectorMap, which it wraps, is MIT.

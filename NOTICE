@@ -1,0 +1,8 @@
+Millibar Dive Map (@millibar/dive-map)
+Copyright 2026 Millibar (https://millibar.io)
+
+This product includes the Millibar Dive Map, developed by Millibar.
+https://github.com/MBAR-Millibar/dive-map
+
+It wraps jsVectorMap (https://github.com/themustafaomar/jsvectormap),
+Copyright (c) Mustafa Omar, licensed under the MIT License.

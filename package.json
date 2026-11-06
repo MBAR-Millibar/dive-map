@@ -2,11 +2,11 @@
   "name": "@millibar/dive-map",
   "version": "1.4.0",
   "description": "The Millibar Dive Map: a world map highlighting the countries a diver has dived in, with Alpine and React adapters.",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "private": true,
   "type": "module",
   "sideEffects": ["*.css"],
-  "files": ["src", "dive-map.css"],
+  "files": ["src", "dive-map.css", "NOTICE"],
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js",
