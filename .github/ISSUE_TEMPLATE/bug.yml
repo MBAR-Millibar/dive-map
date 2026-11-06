@@ -1,0 +1,41 @@
+name: 🐛 Bug
+description: The map draws, zooms or behaves wrongly.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: And what you expected instead. A screenshot helps for anything visual.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The options or props you pass (for example `selected`, `wishlist`, `community`), and the steps.
+      render: js
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The tag you install, for example v1.4.1.
+    validations:
+      required: true
+  - type: dropdown
+    id: adapter
+    attributes:
+      label: Adapter
+      options:
+        - Alpine
+        - React
+        - Plain JavaScript
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Safari 19, iPhone

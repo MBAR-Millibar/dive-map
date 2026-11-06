@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/MBAR-Millibar/dive-map/security/advisories/new
+    about: Please report vulnerabilities privately, not in an issue.
+  - name: 🚨 Report a Code of Conduct concern
+    url: mailto:conduct@millibar.io
+    about: Do NOT report incidents in an issue. Reports are handled confidentially.

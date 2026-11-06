@@ -1,0 +1,32 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Syntax
+        run: for f in src/*.js scripts/*.mjs; do node --check "$f"; done
+      - name: Imports
+        run: |
+          node --input-type=module -e "
+            const c = await import('./src/countries.js');
+            if (c.COUNTRY_CODES.length < 200 || !c.isDiveMapCountry('mt')) throw new Error('countries');
+            if (typeof (await import('./src/index.js')).createDiveMap !== 'function') throw new Error('index');
+            if (typeof (await import('./src/alpine.js')).mbarDiveMap !== 'function') throw new Error('alpine');
+          "
+      - name: Regions are up to date
+        run: npm run regions && git diff --exit-code src/map-regions.js

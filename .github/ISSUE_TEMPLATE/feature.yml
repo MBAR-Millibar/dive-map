@@ -1,0 +1,25 @@
+name: 💡 Feature request
+description: A new option, layer or behaviour for the map.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do?
+      description: The problem from the diver's or the developer's point of view, not the solution yet.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: How the map could support it (an option, a prop, a CSS variable…).
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where would you use it?
+      multiple: true
+      options:
+        - app.millibar.io
+        - map.millibar.io
+        - Another project

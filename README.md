@@ -1,5 +1,6 @@
 # @millibar/dive-map
 
+[![Checks](https://github.com/MBAR-Millibar/dive-map/actions/workflows/checks.yml/badge.svg)](https://github.com/MBAR-Millibar/dive-map/actions/workflows/checks.yml)
 [![Release](https://img.shields.io/github/v/release/MBAR-Millibar/dive-map?color=0d8ac5)](https://github.com/MBAR-Millibar/dive-map/releases/latest)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![ESM, no build step](https://img.shields.io/badge/ESM-no%20build%20step-4daedb)](#install)
@@ -217,6 +218,10 @@ isDiveMapCountry('mt'); // true
 ## Known limits
 
 - jsVectorMap keeps one global event registry. Destroying a map flushes it, which also detaches the events of any other map on the page. One map per page is safe.
+
+## Contributing
+
+Bug reports, fixes and ideas are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style and checks, and [SECURITY.md](SECURITY.md) to report a vulnerability privately. This project follows the [Millibar.io Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 

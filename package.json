@@ -2,6 +2,24 @@
   "name": "@millibar/dive-map",
   "version": "1.4.1",
   "description": "The Millibar Dive Map: a world map highlighting the countries a diver has dived in, with Alpine and React adapters.",
+  "keywords": [
+    "diving",
+    "scuba-diving",
+    "world-map",
+    "map",
+    "jsvectormap",
+    "alpinejs",
+    "react"
+  ],
+  "homepage": "https://github.com/MBAR-Millibar/dive-map#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MBAR-Millibar/dive-map.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MBAR-Millibar/dive-map/issues"
+  },
+  "author": "Millibar <hello@millibar.io> (https://millibar.io)",
   "license": "Apache-2.0",
   "private": true,
   "type": "module",
